@@ -1,0 +1,67 @@
+﻿@page "/timerapp"
+
+
+<div class="clock">
+    <div class="input-group">
+        <span class="@currentCss">@currentTime</span>
+        <div class="input-group-append">
+            <button class="btn btn-primary"
+                    type="button"
+                    @onclick="start">
+                Start
+            </button>
+            <button class="btn btn-primary"
+                    type="button"
+                    @onclick="stop">
+                Stop
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    @using System.Timers
+
+        string currentTime = "N/A";
+        string currentCss = "clock-notset";
+        Timer timer;
+        protected override void OnInitialized()
+        {
+            InitTimer();
+            StartTimer();
+        }
+        void start()
+        {
+
+            StartTimer();
+
+        }
+
+        void stop()
+        {
+            StopTimer();
+        }
+        private Task TimerTick()
+        {
+            currentTime = DateTime.Now.ToLongTimeString();
+            currentCss = "clock-working";
+            this.StateHasChanged();
+            return Task.CompletedTask;
+        }
+        private void InitTimer()
+        {
+            timer = new Timer(1000);
+            timer.Elapsed += async (sender, e) => await TimerTick();
+        }
+        private void StartTimer()
+        {
+  
+            timer.Start();
+        }
+        private void StopTimer()
+        {
+
+            timer.Stop();
+        }
+    
+}
