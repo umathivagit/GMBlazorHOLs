@@ -1,0 +1,37 @@
+﻿@page "/timer"
+@using System.Timers
+<h3>Timer Component</h3>
+<div style="height:150px; width: 300px; border: solid 1px #000; margin: 20px; padding:20px; text-align: center">
+    <h2>
+        @Time
+    </h2>
+    <button @onclick="StartTimer">Start</button>
+    <button @onclick="StopTimer">Stop</button>
+</div>
+
+@code {
+    public string Time { get; set; } = "00 : 00";
+    private Timer _timer = new System.Timers.Timer(1000);
+    public DateTime startTime { get; set; }
+
+
+
+    void StartTimer()
+    {
+        _timer.Elapsed += OnTimedEvent;
+        startTime = DateTime.Now;
+        _timer.Start();
+    }
+    void StopTimer()
+    {
+        _timer.Stop();
+    }
+
+    private void OnTimedEvent(Object source, ElapsedEventArgs e)
+    {
+        //Console.WriteLine(e.SignalTime);
+        var ts = e.SignalTime.Subtract(startTime);
+        Time = $"{ts.Minutes.ToString("00")} : {ts.Seconds.ToString("00")}";
+        StateHasChanged();
+    }
+}
