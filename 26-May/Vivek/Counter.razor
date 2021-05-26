@@ -1,0 +1,39 @@
+﻿@page "/counter"
+@using System.Timers;
+
+@using Microsoft.Extensions.Logging
+@inject ILogger<Counter> Logger
+
+<h1>@(timeElapsed)</h1>
+<br/>
+
+<button class="btn btn-primary" @onclick="Start">START</button>
+<button class="btn btn-primary" @onclick="Stop">STOP</button>
+
+@code {
+    private string timeElapsed = "00 : 00";
+    private Timer timer = new System.Timers.Timer(1000);
+    public DateTime starttime { get; set; }
+
+
+    protected void Start()
+    {
+        timer.Elapsed += this.OnTimedEvent;
+        starttime = DateTime.Now;
+        timer.Start();
+    }
+
+    protected void Stop()
+    {
+        timeElapsed = "00 : 00";
+        timer.Stop();
+    }
+
+    public void OnTimedEvent(Object source, ElapsedEventArgs e)
+    {
+        Logger.LogInformation("Timer triggered");
+        TimeSpan ts = e.SignalTime.Subtract(starttime);
+        timeElapsed = $"{ts.Minutes.ToString("00")} : {ts.Seconds.ToString("00")}";
+        StateHasChanged();
+    }
+}
